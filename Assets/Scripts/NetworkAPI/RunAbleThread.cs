@@ -11,6 +11,7 @@ namespace NetworkAPI
     {
         private readonly Thread _runnerThread;
         protected String _cmd;
+        public float  _predictedCyberSickness;
 
         protected RunAbleThread()
         {
@@ -41,5 +42,7 @@ namespace NetworkAPI
             // _runnerThread will end before main thread end
             _runnerThread.Join();
         }
+        
+        
     }
 }

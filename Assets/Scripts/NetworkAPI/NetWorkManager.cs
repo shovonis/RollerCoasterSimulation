@@ -1,41 +1,61 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace NetworkAPI
 {
     public class NetWorkManager : MonoBehaviour
     {
-        [SerializeField] private String _experimentName;
-        private bool hasExperimentStarted;
-        public float endTimer = 300;
-        private Scene currentScene;
-        public static float timeToStop;
-        private float timeForNextExperiment;
-        private PythonServerAPI _pythonServerApi;
-        void Start()
-        {
-            _pythonServerApi = new PythonServerAPI();
-            _pythonServerApi.Start();
-            hasExperimentStarted = false;
-            if (!hasExperimentStarted)
-            {
-                SendStartExperimentReq(_experimentName);
-            }
-        }
+        [SerializeField] private int dataCollectionFreq = 60;
+        [SerializeField] private float endTimer = 300;
 
+        private Scene _currentScene;
+        private float _timerForGettingData;
+        private static float _simulationTime;
+        private static string CYBER_SENSE_SERVER_URL = "http://localhost:5555/GetPrediction";
+        public float PredictedCyberSickness { get; set; } = -10.0f;
         private void FixedUpdate()
         {
-            timeToStop = timeToStop + Time.deltaTime;
-            timeForNextExperiment = timeForNextExperiment + Time.deltaTime;
-            bool loadNextScene = Input.GetKeyDown(KeyCode.N);
-
-            if (timeToStop >= endTimer && _pythonServerApi.hasDataProcessed)
+            _simulationTime = _simulationTime + Time.deltaTime;
+            _timerForGettingData = _timerForGettingData + Time.deltaTime;
+            
+            if (_timerForGettingData >= dataCollectionFreq)
             {
-                LoadNextSceneAndStopExp(loadNextScene);
+                Debug.Log("Timer expired! Sending cyber sickness GET request to server..");
+                StartCoroutine(GetCybersicknessPrediction(CYBER_SENSE_SERVER_URL));
+                _timerForGettingData = 0.0f; // Resetting timer
+            }
+
+            if (_simulationTime >= endTimer)
+            {
+                TerminateSimulation();
+            }
+        }
+        IEnumerator GetCybersicknessPrediction(string uri)
+        {
+            UnityWebRequest uwr = UnityWebRequest.Get(uri);
+            yield return uwr.SendWebRequest();
+
+            if (uwr.isNetworkError)
+            {
+                Debug.Log("Error While Sending: " + uwr.error);
+                PredictedCyberSickness = -10.0f;;
+            }
+            else
+            {
+                Debug.Log("Received Cybersickness Prediction: " + uwr.downloadHandler.text);
+                PredictedCyberSickness = float.Parse(uwr.downloadHandler.text);
             }
         }
 
+
+        private void TerminateSimulation()
+        {
+           int sceneIndex =  SceneManager.GetActiveScene().buildIndex;
+           SceneManager.UnloadSceneAsync(sceneIndex);
+        }
         private void LoadNextSceneAndStopExp(bool loadNextScene)
         {
             if (loadNextScene)
@@ -48,20 +68,7 @@ namespace NetworkAPI
                 Logger.Log(LogLevel.INFO, "Initial static Scene finished. Total runtime: " + endTimer + "s");
             }
 
-            CloseSeverConnection();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-
-        private void SendStartExperimentReq(String expName)
-        {
-            _pythonServerApi.SetMessageAndSend(expName);
-            hasExperimentStarted = true;
-        }
-
-        private void CloseSeverConnection()
-        {
-            _pythonServerApi.hasDataProcessed = false;
-            _pythonServerApi?.Stop();
         }
     }
 }

@@ -11,38 +11,49 @@ namespace NetworkAPI
         private bool isConnectionDone;
         private RequestSocket client;
         private String HAS_DATA_COLLECTED = "Done";
+        private bool _requestCyberSickness = false;
+        private bool _waitForServerToRespond = false;
 
         protected override void Run()
         {
             ForceDotNet.Force();
             isConnectionDone = false;
-            using (client = new RequestSocket())
+            string message = null;
+            bool gotMessage = false;
+
+            while (Running)
             {
-                client.Connect("tcp://localhost:5555");
-                Debug.Log("Initiating Experiment: " + _cmd);
-                SendTCPMessage(_cmd);
-                string message = null;
-                bool gotMessage = false;
-                
-                while (Running)
+                if (_requestCyberSickness)
                 {
-                    gotMessage = client.TryReceiveFrameString(out message);
-                    if (gotMessage)
+                    StartServer();
+                    Debug.Log("Sending Request...");
+                    SendTCPMessage(_cmd);
+                    _requestCyberSickness = false;
+                    _waitForServerToRespond = true;
+                   
+                    if (_waitForServerToRespond)
                     {
-                        Debug.Log("Python Server finished collecting data: " + message);
-
-                        if (message.Contains(HAS_DATA_COLLECTED))
+                        gotMessage = client.TryReceiveFrameString(out message);
+                        if (gotMessage)
                         {
+                            Debug.Log("CyberSense Server Successfully Returned Results");
                             isConnectionDone = true;
-                            break;
+                            _predictedCyberSickness = float.Parse(message);
+                            Debug.Log("Predicted CyberSickness: " + _predictedCyberSickness);
+                            _waitForServerToRespond = false;
+                            // break;
+                            // NetMQConfig.Cleanup();
                         }
-
-                        Debug.LogError("ERROR! Python Server could not collect the sensor data!");
                     }
                 }
             }
+        }
 
-            NetMQConfig.Cleanup();
+        private void StartServer()
+        {
+            client = new RequestSocket();
+            client.Connect("tcp://localhost:5555");
+            Debug.Log("Client Network API is ready");
         }
 
         public void SendTCPMessage(String msg)
@@ -54,11 +65,12 @@ namespace NetworkAPI
         {
             _cmd = cmd;
         }
-        
-        
+
         public void SetMessageAndSend(String message)
         {
             isConnectionDone = false;
+            _requestCyberSickness = true;
+            _waitForServerToRespond = true;
             SetCmd(message);
         }
 
