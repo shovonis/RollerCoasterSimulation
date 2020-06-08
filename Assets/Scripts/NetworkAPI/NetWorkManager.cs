@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -23,7 +22,9 @@ namespace NetworkAPI
             
             if (_timerForGettingData >= dataCollectionFreq)
             {
-                Debug.Log("Timer expired! Sending cyber sickness GET request to server..");
+                Debug.Log("Timer expired! Sending Request to server for cybersickness...");
+                Logger.Log(LogLevel.INFO, "Timer expired! Sending Request to server for cybersickness...");
+                
                 StartCoroutine(GetCybersicknessPrediction(CYBER_SENSE_SERVER_URL));
                 _timerForGettingData = 0.0f; // Resetting timer
             }
@@ -35,17 +36,23 @@ namespace NetworkAPI
         }
         IEnumerator GetCybersicknessPrediction(string uri)
         {
+            float totalTime = Time.time;
             UnityWebRequest uwr = UnityWebRequest.Get(uri);
             yield return uwr.SendWebRequest();
-
+            totalTime = Time.time - totalTime;
+            
             if (uwr.isNetworkError)
             {
-                Debug.Log("Error While Sending: " + uwr.error);
+                Debug.LogError("Error!! while sending request to server: " + uwr.error);
+                Logger.Log(LogLevel.ERROR, "Error!! while sending request to server: " + uwr.error);
                 PredictedCyberSickness = -10.0f;;
             }
             else
             {
                 Debug.Log("Received Cybersickness Prediction: " + uwr.downloadHandler.text);
+                Logger.Log(LogLevel.INFO, "Received Cybersickness Prediction: " + uwr.downloadHandler.text);
+                Debug.Log("Total Time Required: " + totalTime);
+                Logger.Log(LogLevel.INFO, "Total Time Required: " + totalTime);
                 PredictedCyberSickness = float.Parse(uwr.downloadHandler.text);
             }
         }
