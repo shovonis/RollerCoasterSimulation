@@ -3,3 +3,21 @@
 [INFO][2020.06.08 17:25:17:705]::Received Cybersickness Prediction: 7.82
 [INFO][2020.06.08 17:25:17:706]::Total Time Required: 2.295561
 [INFO][2020.06.08 17:25:21:697]::Simulation Done! Application is quiting
+[INFO][2020.06.08 18:39:38:981]::Roller coaster moving scene started.
+[INFO][2020.06.08 18:39:50:350]::Simulation Done! Application is quiting
+[INFO][2020.06.08 18:40:11:751]::Roller coaster moving scene started.
+[INFO][2020.06.08 18:40:22:477]::Timer expired! Sending Request to server for cybersickness...
+[ERROR][2020.06.08 18:40:24:736]::Error!! while sending request to server: Cannot connect to destination host
+[INFO][2020.06.08 18:40:28:675]::Simulation Done! Application is quiting
+[INFO][2020.06.12 13:31:38:241]::Roller coaster moving scene started.
+[INFO][2020.06.12 13:31:51:158]::Timer expired! Sending Request to server for cybersickness...
+[ERROR][2020.06.12 13:31:53:441]::Error!! while sending request to server: Cannot connect to destination host
+[INFO][2020.06.12 13:32:02:210]::Simulation Done! Application is quiting
+[INFO][2020.06.12 14:35:24:487]::Roller coaster moving scene started.
+[INFO][2020.06.12 14:35:37:474]::Timer expired! Sending Request to server for cybersickness...
+[ERROR][2020.06.12 14:35:39:769]::Error!! while sending request to server: Cannot connect to destination host
+[INFO][2020.06.12 14:35:43:491]::Simulation Done! Application is quiting
+[INFO][2020.06.12 14:35:47:616]::Roller coaster moving scene started.
+[INFO][2020.06.12 14:35:58:220]::Timer expired! Sending Request to server for cybersickness...
+[ERROR][2020.06.12 14:36:00:524]::Error!! while sending request to server: Cannot connect to destination host
+[INFO][2020.06.12 14:36:02:475]::Simulation Done! Application is quiting

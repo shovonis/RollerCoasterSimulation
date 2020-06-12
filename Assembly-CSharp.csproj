@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\BlurPredictionHandler.cs" />
      <Compile Include="Assets\Resource\laxer Assets\coaster\AnimationDelay.cs" />
      <Compile Include="Assets\Resource\laxer Assets\coaster\AudioVelocityControl.cs" />
      <Compile Include="Assets\Resource\laxer Assets\coaster\Other\CoasterControllerSWLXR UI.cs" />
@@ -57,8 +58,10 @@
      <Compile Include="Assets\Scripts\coaster\Test.cs" />
      <Compile Include="Assets\Scripts\coaster\Write_Start_Time_Final_Scene.cs" />
      <Compile Include="Assets\Scripts\coaster\data_Collection.cs" />
+     <Compile Include="Assets\SicknessReduction\DynamicBlur\DynamicGaussianBlur.cs" />
      <Compile Include="Assets\SicknessReduction\DynamicFOV\VignetteFOV.cs" />
      <None Include="Assets\Resource\Ghettoish House\Read me.txt" />
+     <None Include="Assets\SicknessReduction\DynamicBlur\GaussianBlur.shader" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.15f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
