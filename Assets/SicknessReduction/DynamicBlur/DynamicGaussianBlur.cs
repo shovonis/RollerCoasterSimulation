@@ -60,6 +60,7 @@ public class DynamicGaussianBlur : MonoBehaviour
     }
 
     public bool useEditorValue = true;
+    float cachedSigma = 0f;
     void OnRenderImage(RenderTexture src, RenderTexture dst)
     {
 
@@ -68,15 +69,17 @@ public class DynamicGaussianBlur : MonoBehaviour
         if(!useEditorValue){
 
             sigma = Mathf.Lerp(0f, sigmaMaximum, (angularAcceleration.magnitude - angularAccelerationThreshold)*accelerationModifier);
+            
         }
 
         //float kernelSum = kernel.Sum();
         //kernel = kernel.Select(kernel=>kernel/kernelSum).ToArray();
-        kernel = new float[121];
+        kernel = new float[25];
         //initialize to some f
-        for(int x = 0; x<11; x++){
-            for(int y = 0; y<11; y++){
-                kernel[y*11 + x] = GaussianFunction(x-5, y-5,sigma); //update kernel
+        for(int x = 0; x<5; x++){
+            for(int y = 0; y<5; y++){
+                kernel[y*5 + x] = GaussianFunction(x-2, y-2,sigma); //update kernel
+            }
         }
         //calculate sum for later
         float kernelSum = 0;
@@ -112,7 +115,6 @@ public class DynamicGaussianBlur : MonoBehaviour
             Graphics.Blit(renderTexture, dst);
         
             RenderTexture.ReleaseTemporary(renderTexture);
-        }   
         
     }
 
@@ -120,6 +122,8 @@ public class DynamicGaussianBlur : MonoBehaviour
         float p1 = 1f/ ((2f*Mathf.PI) * Mathf.Pow(sigma,2f));
         float eExponent = -(Mathf.Pow(x,2) + Mathf.Pow(y,2)) / (2*Mathf.Pow(sigma,2));
         float answer = p1 * Mathf.Exp(eExponent);
+
+       
         return answer;
     }
 }
